@@ -10,8 +10,7 @@ D3.js
 ``` javascript
 LoadGrowGuage(elementDOM, initalValue , [config]);
 ````
-
-### Option
+**Option**
   - **elementDom** : HTML Dom where the gauge to be loaded 
   - **initalValue** : Inital value for the guage, By Default set to `0`
 
