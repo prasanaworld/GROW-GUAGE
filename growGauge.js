@@ -1,22 +1,16 @@
-function LoadGrowGuage.settings(){
-    return {
-        color : ["#BACA29", "#ECE00E",  "#E7B410", "#F4A300", "#ED6000"],
-        guageText : "Grow Gauge",
-        gradientCircle : true,
-        gradientSegment : false,
-    }
-}
+(function() {
+    'use strict'
 
-function LoadGrowGuage(element, value, config)     {
-    
-    var $element = d3.select(element).node().getBoundingClientRect(),
-        width = $element.width,
-        height = $element.height,
-        Dimension = Math.min(width, height),
-        cirlceRadius =50;
+    function LoadGrowGuage(element, value, config) {
+
+        var $element = d3.select(element).node().getBoundingClientRect(),
+            width = $element.width,
+            height = $element.height,
+            Dimension = Math.min(width, height),
+            cirlceRadius = 50;
 
 
-    var segmentData = [{
+        var segmentData = [{
             arc: "M42.6,115.3c5.2,1.5,11,2.4,16.8,2.4c1.1,0,2.7,0,3.7-0.1v-2.2c-7,0-13.1-1.3-18.8-3.6L42.6,115.3z"
         }, {
             arc: "M25.7,99.3c4.3,4.7,9.5,8.6,15.3,11.3l-1.4,3.8c-6.9-2.4-13.2-6.1-18.6-10.8L25.7,99.3z"
@@ -29,7 +23,7 @@ function LoadGrowGuage(element, value, config)     {
         }];
 
         value = value || 0;
-        config =  config || LoadGrowGuage.settings();
+        config = config || LoadGrowGuage.DefaultSettings();
 
         var color = config.color;
 
@@ -39,156 +33,180 @@ function LoadGrowGuage(element, value, config)     {
 
 
         var svg = d3.select(element).append("svg")
-                    .attr("width", width)
-                    .attr("height", height)
-                    .attr("viewBox", "0 0 120 120")
-                    .attr("preserveAspectRatio", "xMidYMid");
+            .attr("width", width)
+            .attr("height", height)
+            .attr("viewBox", "0 0 120 120")
+            .attr("preserveAspectRatio", "xMidYMid");
 
-        
-        var container = svg.append("g").attr("class","GA_Container")
+
+        var container = svg.append("g").attr("class", "GA_Container")
 
 
         /*Arc Guage Section */
-        var gauge = container.append("g").attr('class','gauge');
+        var gauge = container.append("g").attr('class', 'gauge');
 
         var segments = gauge.selectAll(".segment")
-                            .data(segmentData);            
+            .data(segmentData);
         segments.enter()
-                .append("path")
-                .attr("fill",  function(d,i) {  return "url(#radial"+i+")" })
-                .attr("d", function(d) { return d.arc; });
+            .append("path")
+            .attr("fill", function(d, i) {
+                return "url(#radial" + i + ")"
+            })
+            .attr("d", function(d) {
+                return d.arc;
+            });
 
-        var gaugeBox = gauge.node().getBBox();                        
+        var gaugeBox = gauge.node().getBBox();
 
-        
+
         /* Center Circle section */
-        var circle = container.append("g").attr('class','circle')
+        var circle = container.append("g").attr('class', 'circle')
 
         var centerCircle = circle.append("circle")
-                                .data(color)
-                                .attr("fill", "url(#radial)")
-                                .attr("cx", gaugeBox.width + (gaugeBox.width*5/100))
-                                .attr("cy", (gaugeBox.height - gaugeBox.y)/2 + (gaugeBox.height *6.8/100) )
-                                .attr("r", cirlceRadius);
-        
+            .data(color)
+            .attr("fill", "url(#radial)")
+            .attr("cx", gaugeBox.width + (gaugeBox.width * 5 / 100))
+            .attr("cy", (gaugeBox.height - gaugeBox.y) / 2 + (gaugeBox.height * 6.8 / 100))
+            .attr("r", cirlceRadius);
+
         var circleBox = circle.node().getBBox();
 
 
         /* Text for the Guage section */
 
-        var marker = container.append("g").attr('class','marker')
-        
-        var circleText = marker.append("svg:text")
-                            .text(config.guageText)
-                            .attr("text-anchor", "middle")
-                            .attr("font-size", "0.7em")
-                            .attr("fill", "white")
-                            .attr("transform", "translate("+parseFloat((circleBox.width + circleBox.x)/1.78) + "," + parseFloat(gaugeBox.height/1.3) + ")");
-    
-        var circlePercentage = marker.append("svg:text").text(0)   
-                                .attr("font-size", "1em")
-                                 .attr("text-anchor", "middle")
-                                .attr("fill", "white")
-                                .attr("transform", "translate("+ parseFloat((circleBox.width + circleBox.x)/1.78) + "," + parseFloat(gaugeBox.height/2 + 10) + ")");                          
+        var marker = container.append("g").attr('class', 'marker')
 
-        
+        var circleText = marker.append("svg:text")
+            .text(config.guageText)
+            .attr("text-anchor", "middle")
+            .attr("font-size", "0.7em")
+            .attr("fill", "white")
+            .attr("transform", "translate(" + parseFloat((circleBox.width + circleBox.x) / 1.78) + "," + parseFloat(gaugeBox.height / 1.3) + ")");
+
+        var circlePercentage = marker.append("svg:text").text(0)
+            .attr("font-size", "1em")
+            .attr("text-anchor", "middle")
+            .attr("fill", "white")
+            .attr("transform", "translate(" + parseFloat((circleBox.width + circleBox.x) / 1.78) + "," + parseFloat(gaugeBox.height / 2 + 10) + ")");
+
+
         /*Radial Gradient Pattern */
         var dfs = svg.append('defs');
         var segmentColor = [];
         var centerCircleColor;
 
         if (config.gradientSegment) {
-            segMentGradient();            
+            segMentGradient();
         }
 
         if (config.gradientCircle) {
             cirlceGraident();
         }
 
-       update(value);
+        update(value);
 
 
 
-       function cirlceGraident() {
-             var radial = dfs.append("radialGradient")
-                                .attr("id", "radial")
-                                .attr("cx", "100%")
-                                .attr("cy", "50%")
-                                .attr("r", "100%")
-                                .attr("fx", "50%")
-                                .attr("fy", "50%");
+        function cirlceGraident() {
+            var radial = dfs.append("radialGradient")
+                .attr("id", "radial")
+                .attr("cx", "100%")
+                .attr("cy", "50%")
+                .attr("r", "100%")
+                .attr("fx", "50%")
+                .attr("fy", "50%");
 
             var centerCircleColor1 = radial.append("stop")
-                                    .attr("offset", "10%")
-                                    .attr("stop-opacity",1)
-                                    .attr("stop-color", "#ccc");
+                .attr("offset", "10%")
+                .attr("stop-opacity", 1)
+                .attr("stop-color", "#ccc");
 
             var centerCircleColor2 = radial.append("stop")
-                                    .attr("offset", "100%")
-                                    .attr("stop-opacity",0.5)
-                                    .attr("stop-color", "#000");
-            
-            centerCircleColor =centerCircleColor1;
-       }
+                .attr("offset", "100%")
+                .attr("stop-opacity", 0.5)
+                .attr("stop-color", "#000");
 
-       function segMentGradient() {
-            
-            for( var i=0; i<color.length; i++) {
+            centerCircleColor = centerCircleColor1;
+        }
+
+        function segMentGradient() {
+
+            for (var i = 0; i < color.length; i++) {
 
 
                 var radial = dfs.append("radialGradient")
-                                    .attr("id", "segment"+i)
-                                    .attr("cx", "10%")
-                                    .attr("cy", "10%")
-                                    .attr("r", "100%")
-                                    .attr("fx", "10%")
-                                    .attr("fy", "10%");
+                    .attr("id", "segment" + i)
+                    .attr("cx", "10%")
+                    .attr("cy", "10%")
+                    .attr("r", "100%")
+                    .attr("fx", "10%")
+                    .attr("fy", "10%");
 
                 var color1 = radial.append("stop")
-                                    .attr("offset", "90%")
-                                    .attr("stop-opacity",1)
-                                    .attr("stop-color", "#ccc");
+                    .attr("offset", "90%")
+                    .attr("stop-opacity", 1)
+                    .attr("stop-color", "#ccc");
 
-                
+
                 var color2 = radial.append("stop")
-                                    .attr("offset", "100%")
-                                    .attr("stop-opacity",0)
-                                    .attr("stop-color", "#000");
+                    .attr("offset", "100%")
+                    .attr("stop-opacity", 0)
+                    .attr("stop-color", "#000");
 
                 segmentColor.push(color1);
             }
-       }
-
-        function update(value) {            
-            var segementValue  = (value - (value % 20 )) / 20;
-            segementValue =  (segementValue > 0) ? (segementValue + 1) === 6 ? 5 : segementValue + 1  : 1;
-
-        
-            if (config.gradientSegment) {
-                segments.transition(100)
-                        .attr("fill", function(d, i) { 
-                            segmentColor[i].attr("stop-color", i < segementValue ? d.color : "#ccc");  
-                            return "url(#segment"+i+")";
-                        });
-            } else {
-                 segments.transition(100)
-                    .attr("fill", function(d, i) { return i < segementValue ? d.color : "#ccc"; });
-                
-            }
-
-           if (config.gradientCircle) {
-                centerCircleColor.transition(100)
-                      .attr("stop-color", function(d,i) {  return color[segementValue-1]; });
-           } else {
-                centerCircle.transition(100)
-                            .attr("fill", function(d,i) {  return color[segementValue-1] });
-            }
-           
-            circlePercentage.transition(100).text(value+"%");
         }
 
-    return  { 
-        update : update
-    };
+        function update(value) {
+            var segementValue = (value - (value % 20)) / 20;
+            segementValue = (segementValue > 0) ? (segementValue + 1) === 6 ? 5 : segementValue + 1 : 1;
 
-} 
+
+            if (config.gradientSegment) {
+                segments.transition(100)
+                    .attr("fill", function(d, i) {
+                        segmentColor[i].attr("stop-color", i < segementValue ? d.color : "#ccc");
+                        return "url(#segment" + i + ")";
+                    });
+            } else {
+                segments.transition(100)
+                    .attr("fill", function(d, i) {
+                        return i < segementValue ? d.color : "#ccc";
+                    });
+
+            }
+
+            if (config.gradientCircle) {
+                centerCircleColor.transition(100)
+                    .attr("stop-color", function(d, i) {
+                        return color[segementValue - 1];
+                    });
+            } else {
+                centerCircle.transition(100)
+                    .attr("fill", function(d, i) {
+                        return color[segementValue - 1]
+                    });
+            }
+
+            circlePercentage.transition(100).text(value + "%");
+        }
+
+        return {
+            update: update
+        };
+
+    }
+
+
+    LoadGrowGuage.prototype.DefaultSettings = function() {
+        return {
+            color: ["#BACA29", "#ECE00E", "#E7B410", "#F4A300", "#ED6000"],
+            guageText: "Grow Gauge",
+            gradientCircle: true,
+            gradientSegment: false,
+        }
+    }
+
+    window.LoadGrowGuage = LoadGrowGuage;
+
+})();
