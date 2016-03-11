@@ -28,7 +28,7 @@ function LoadGrowGuage(element, value, config)     {
             arc: "M63,15.7V0.8c-1-0.1-2.5-0.1-3.7-0.1c-19.9,0-37.5,9.9-48.1,25l12.7,8.6C33.1,23,46,15.7,63,15.7z"
         }];
 
-
+        value = value || 0;
         config =  config || LoadGrowGuage.settings();
 
         var color = config.color;
