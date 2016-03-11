@@ -1,7 +1,7 @@
 function LoadGrowGuage.settings(){
     return {
         color : ["#BACA29", "#ECE00E",  "#E7B410", "#F4A300", "#ED6000"],
-        guageText : "Memory Usage",
+        guageText : "Grow Gauge",
         gradientCircle : true,
         gradientSegment : false,
     }
