@@ -11,15 +11,15 @@ D3.js
 LoadGrowGuage(elementDOM, initalValue , [config]);
 ````
 
+### Option
+  - **elementDom** : HTML Dom where the gauge to be loaded 
+  - **initalValue** : Inital value for the guage, By Default set to `0`
+
 **configuration**
 ``` javascript
 var config = LoadGrowGuage.DefaultSettings();
 LoadGrowGuage(elementDOM, initalValue , config);
 ``` 
-
-### Option
-  - **elementDom** : HTML Dom where the gauge to be loaded 
-  - **initalValue** : Inital value for the guage, By Default set to `0`
 
 ### Default Configuration Object
 ``` javascript
